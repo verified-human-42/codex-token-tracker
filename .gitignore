@@ -1,0 +1,9 @@
+*.exe
+*.pdb
+checks/
+release/
+auth.json
+.env
+.vs/
+bin/
+obj/
