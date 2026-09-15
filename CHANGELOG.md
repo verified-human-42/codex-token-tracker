@@ -2,6 +2,8 @@
 
 ## 1.1
 
+- Redesigned the tray icon with plain Segoe UI digits on a transparent background, without a badge or outline.
+- Corrected text transparency and enabled DPI awareness for sharper rendering.
 - Plus accounts refresh usage every 20 seconds; Pro accounts continue to refresh every minute.
 - Replaced the README tray screenshot with the supplied image after removing the language indicators.
 

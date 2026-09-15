@@ -19,7 +19,8 @@ Run **TokenTracker.exe**. No installation or app window. Right-click the tray ic
 
 - Plus: five-hour percentage above weekly percentage.
 - Pro (including Pro Lite): weekly percentage fills the icon.
-- Red: 0–10% left. Yellow: 11–25%. Black: above 25%. A fine white outline keeps black text visible on dark taskbars.
+- Red: 0–10% left. Yellow: 11–25%. Black: above 25%.
+- Plain Segoe UI digits on a transparent background, drawn at the tray's pixel size.
 - Numbers represent percentages; the percent sign is omitted in the tiny icon for legibility.
 - Plus refreshes every 20 seconds; Pro refreshes every minute. Unavailable or expired data shows `?`, never a made-up percentage.
 

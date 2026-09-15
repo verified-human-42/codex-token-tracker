@@ -18,7 +18,9 @@ using System.Runtime.InteropServices;
 [assembly: System.Reflection.AssemblyInformationalVersion("1.1")]
 
 static class Program {
+    [DllImport("user32.dll")] static extern bool SetProcessDPIAware();
     [STAThread] static void Main(string[] args) {
+        SetProcessDPIAware();
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -82,39 +84,40 @@ static class Artwork {
     [DllImport("user32.dll")] static extern bool DestroyIcon(IntPtr icon);
     public static Color Ink(int n) { return n <= 10 ? Color.FromArgb(218,35,45) : n <= 25 ? Color.FromArgb(221,166,0) : Color.Black; }
     public static Bitmap Draw(int size, int? top, int? bottom, bool two) {
-        var bmp = new Bitmap(size, size);
-        using (var g = Graphics.FromImage(bmp)) {
-            g.Clear(Color.Transparent);
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-            Paint(g, new RectangleF(0,0,size,two ? size/2f : size), top);
-            if (two) Paint(g, new RectangleF(0,size/2f,size,size/2f), bottom);
-        }
-        return bmp;
+        var bitmap = new Bitmap(size, size);
+        Paint(bitmap, new Rectangle(0,0,size,two ? size/2 : size), top);
+        if (two) Paint(bitmap, new Rectangle(0,size/2,size,size-size/2), bottom);
+        return bitmap;
     }
-    static void Paint(Graphics g, RectangleF box, int? number) {
+    // Render Windows hinted text once at its final pixel size. Convert the
+    // grayscale coverage into alpha; GDI text does not preserve bitmap alpha.
+    static void Paint(Bitmap target, Rectangle box, int? number) {
         string text = number.HasValue ? number.Value.ToString() : "?";
-        using (var format = new StringFormat(StringFormat.GenericTypographic)) {
-            format.Alignment = StringAlignment.Center; format.LineAlignment = StringAlignment.Center;
-            format.FormatFlags |= StringFormatFlags.NoWrap;
-            float pixels = box.Height * .96f;
-            while (pixels > 5) {
-                using (var font = new Font("Segoe UI", pixels, FontStyle.Bold, GraphicsUnit.Pixel)) {
-                    if (g.MeasureString(text, font, 1000, format).Width <= box.Width) {
-                        using (var path = new GraphicsPath()) {
-                            path.AddString(text, font.FontFamily, (int)FontStyle.Bold, pixels, new PointF(0,0), StringFormat.GenericTypographic);
-                            var bounds = path.GetBounds();
-                            float scale = Math.Min((box.Width-1.5f)/bounds.Width,(box.Height-1f)/bounds.Height);
-                            using (var matrix = new Matrix(scale,0,0,scale,
-                                box.X+(box.Width-bounds.Width*scale)/2-bounds.X*scale,
-                                box.Y+(box.Height-bounds.Height*scale)/2-bounds.Y*scale)) path.Transform(matrix);
-                            using (var outline = new Pen(Color.FromArgb(235,255,255,255), Math.Max(.8f,box.Width/28f))) { outline.LineJoin = LineJoin.Round; g.DrawPath(outline,path); }
-                            using (var brush = new SolidBrush(number.HasValue ? Ink(number.Value) : Color.Gray)) g.FillPath(brush,path);
-                        }
-                        return;
-                    }
+        Color ink = number.HasValue ? Ink(number.Value) : Color.Gray;
+        var flags = TextFormatFlags.NoPadding | TextFormatFlags.NoClipping | TextFormatFlags.SingleLine;
+        using (var mask = new Bitmap(128,128)) {
+            for (float pixels = box.Height*1.5f; pixels >= 4f; pixels -= .5f) {
+                using (var g = Graphics.FromImage(mask))
+                using (var font = new Font("Segoe UI",pixels,FontStyle.Regular,GraphicsUnit.Pixel)) {
+                    g.Clear(Color.Black);
+                    TextRenderer.DrawText(g,text,font,new Point(4,4),Color.White,Color.Black,flags);
                 }
-                pixels -= .5f;
+                int left=128, top=128, right=-1, bottom=-1;
+                for (int y=0;y<128;y++) for (int x=0;x<128;x++) {
+                    var c=mask.GetPixel(x,y);
+                    if (Math.Max(c.R,Math.Max(c.G,c.B)) < 12) continue;
+                    left=Math.Min(left,x); right=Math.Max(right,x);
+                    top=Math.Min(top,y); bottom=Math.Max(bottom,y);
+                }
+                int width=right-left+1, height=bottom-top+1;
+                if (width<=0 || width>box.Width || height>box.Height-1) continue;
+                int dx=box.X+(box.Width-width)/2, dy=box.Y+(box.Height-height)/2;
+                for (int y=0;y<height;y++) for (int x=0;x<width;x++) {
+                    var c=mask.GetPixel(left+x,top+y);
+                    int alpha=(c.R*54+c.G*183+c.B*19)/256;
+                    target.SetPixel(dx+x,dy+y,Color.FromArgb(alpha,ink));
+                }
+                return;
             }
         }
     }
@@ -146,7 +149,7 @@ class Tray : ApplicationContext {
         if (busy || stopped) return;
         busy = true;
         try { var next = await Usage.Read(); if (stopped) return; usage = next; timer.Interval = next.RefreshMilliseconds; updated = DateTime.Now; error = null; }
-        catch (Exception ex) { if (!stopped) { usage = null; error = ex is HttpRequestException || ex is TaskCanceledException ? "Offline - retrying each minute" : ex is IOException ? "Cannot read account - retrying" : ex.Message; } }
+        catch (Exception ex) { if (!stopped) { usage = null; error = ex is HttpRequestException || ex is TaskCanceledException ? "Offline - retrying" : ex is IOException ? "Cannot read account - retrying" : ex.Message; } }
         finally { busy = false; }
         if (!stopped) Update();
     }
@@ -201,6 +204,7 @@ static class Tests {
         foreach (int size in new[] {16,20,24,32,48}) {
             using (var b = Artwork.Draw(size,100,null,false)) b.Save("checks/pro-"+size+".png");
             using (var b = Artwork.Draw(size,10,25,true)) b.Save("checks/plus-"+size+".png");
+            using (var b = Artwork.Draw(size,99,null,false)) b.Save("checks/pro-99-"+size+".png");
         }
         var live = Usage.Read().GetAwaiter().GetResult();
         File.WriteAllText("checks/result.txt", "PASS: parsing, window order, thresholds, icon rendering. Live plan=" + live.Plan + "; weekly=" + (live.Week == null ? "unavailable" : live.Week.Left.ToString()) + "%");
