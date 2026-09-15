@@ -11,7 +11,13 @@ A small, portable Windows tray app that displays your remaining ChatGPT Work / C
 
 ## Tray icon
 
+**Pro:** weekly usage remaining.
+
 ![The Token Tracker icon showing 99 percent left in the Windows taskbar tray](assets/tray-icon.png)
+
+**Plus — simulated:** 10% five-hour usage remaining (red, top) and 25% weekly usage remaining (yellow, bottom).
+
+![Simulated Plus account showing 10 percent five-hour usage remaining in red and 25 percent weekly usage remaining in yellow](assets/tray-icon-plus.png)
 
 ## Use
 
