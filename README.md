@@ -17,7 +17,7 @@ A **portable Windows tray app — no installation required** — that displays y
 
 ![The Token Tracker icon showing 99 percent left in the Windows taskbar tray](assets/tray-icon.png)
 
-**Plus:** 10% five-hour usage remaining (![Red](assets/label-red.svg), top) and 25% weekly usage remaining (![Yellow](assets/label-yellow.svg), bottom).
+**Plus:** 10% five-hour usage remaining (red, top) and 25% weekly usage remaining (yellow, bottom).
 
 ![Plus account preview showing 10 percent five-hour usage remaining in red and 25 percent weekly usage remaining in yellow](assets/tray-icon-plus.png)
 
@@ -27,7 +27,7 @@ Run **TokenTracker.exe**. No installation or app window. Right-click the tray ic
 
 - Plus: five-hour percentage above weekly percentage.
 - Pro (including Pro Lite): weekly percentage fills the icon.
-- ![Red](assets/label-red.svg): 0–10% left. ![Yellow](assets/label-yellow.svg): 11–25%. ![Black](assets/label-black.svg): above 25%.
+- Red: 0–10% left. Yellow: 11–25%. Black: above 25%.
 - Plain Segoe UI digits on a transparent background, drawn at the tray's pixel size.
 - Numbers represent percentages; the percent sign is omitted in the tiny icon for legibility.
 - Plus refreshes every 20 seconds; Pro refreshes every minute. Unavailable or expired data shows `?`, never a made-up percentage.
