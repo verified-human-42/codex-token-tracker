@@ -13,9 +13,9 @@ using System.Runtime.InteropServices;
 
 [assembly: System.Reflection.AssemblyTitle("Codex Token Tracker")]
 [assembly: System.Reflection.AssemblyDescription("ChatGPT Work usage remaining in the Windows system tray")]
-[assembly: System.Reflection.AssemblyVersion("1.0.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("1.0")]
+[assembly: System.Reflection.AssemblyVersion("1.1.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("1.1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.1")]
 
 static class Program {
     [STAThread] static void Main(string[] args) {
@@ -37,6 +37,7 @@ class Usage {
     public string Plan;
     public WindowUsage Five, Week;
     public bool WeeklyOnly { get { return Plan.StartsWith("pro", StringComparison.OrdinalIgnoreCase); } }
+    public int RefreshMilliseconds { get { return Plan.StartsWith("plus", StringComparison.OrdinalIgnoreCase) ? 20000 : 60000; } }
     public static Dictionary<string, object> Obj(object x) { return x as Dictionary<string, object>; }
     public static Usage Parse(string json) {
         var root = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(json);
@@ -144,7 +145,7 @@ class Tray : ApplicationContext {
     async Task Refresh() {
         if (busy || stopped) return;
         busy = true;
-        try { var next = await Usage.Read(); if (stopped) return; usage = next; updated = DateTime.Now; error = null; }
+        try { var next = await Usage.Read(); if (stopped) return; usage = next; timer.Interval = next.RefreshMilliseconds; updated = DateTime.Now; error = null; }
         catch (Exception ex) { if (!stopped) { usage = null; error = ex is HttpRequestException || ex is TaskCanceledException ? "Offline - retrying each minute" : ex is IOException ? "Cannot read account - retrying" : ex.Message; } }
         finally { busy = false; }
         if (!stopped) Update();
@@ -192,9 +193,9 @@ static class Tests {
         string w = "{\"used_percent\":25,\"limit_window_seconds\":604800,\"reset_at\":1790108424}";
         string f = "{\"used_percent\":95,\"limit_window_seconds\":18000,\"reset_at\":1790108424}";
         var pro = Usage.Parse("{\"plan_type\":\"prolite\",\"rate_limit\":{\"primary_window\":"+w+",\"secondary_window\":null}}");
-        Check(pro.WeeklyOnly && pro.Week.Left == 75 && pro.Five == null);
+        Check(pro.WeeklyOnly && pro.Week.Left == 75 && pro.Five == null && pro.RefreshMilliseconds == 60000);
         var plus = Usage.Parse("{\"plan_type\":\"plus\",\"rate_limit\":{\"primary_window\":"+w+",\"secondary_window\":"+f+"}}");
-        Check(!plus.WeeklyOnly && plus.Five.Left == 5 && plus.Week.Left == 75);
+        Check(!plus.WeeklyOnly && plus.Five.Left == 5 && plus.Week.Left == 75 && plus.RefreshMilliseconds == 20000);
         Check(Artwork.Ink(10) != Artwork.Ink(11) && Artwork.Ink(25) != Artwork.Ink(26) && Artwork.Ink(100) == Color.Black);
         Directory.CreateDirectory("checks");
         foreach (int size in new[] {16,20,24,32,48}) {

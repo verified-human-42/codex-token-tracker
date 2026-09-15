@@ -3,15 +3,15 @@
 A small, portable Windows tray app that displays your remaining ChatGPT Work / Codex usage as a percentage.
 
 > [!TIP]
-> **Download version 1.0**
+> **Download version 1.1**
 >
-> **[Download TokenTracker.exe](https://github.com/verified-human-42/codex-token-tracker/releases/download/v1.0/TokenTracker.exe)** · [Release notes](https://github.com/verified-human-42/codex-token-tracker/releases/tag/v1.0)
+> **[Download TokenTracker.exe](https://github.com/verified-human-42/codex-token-tracker/releases/download/v1.1/TokenTracker.exe)** · [Release notes](https://github.com/verified-human-42/codex-token-tracker/releases/tag/v1.1)
 >
 > Requires Windows 10/11, .NET Framework 4.8, internet access, and an existing Codex sign-in with your ChatGPT account. The executable is unsigned.
 
 ## Tray icon
 
-![The live Token Tracker icon showing 99 percent left in the Windows taskbar tray](assets/tray-icon.png)
+![The Token Tracker icon showing 99 percent left in the Windows taskbar tray](assets/tray-icon.png)
 
 ## Use
 
@@ -21,7 +21,7 @@ Run **TokenTracker.exe**. No installation or app window. Right-click the tray ic
 - Pro (including Pro Lite): weekly percentage fills the icon.
 - Red: 0–10% left. Yellow: 11–25%. Black: above 25%. A fine white outline keeps black text visible on dark taskbars.
 - Numbers represent percentages; the percent sign is omitted in the tiny icon for legibility.
-- Refreshes every minute. Unavailable or expired data shows `?`, never a made-up percentage.
+- Plus refreshes every 20 seconds; Pro refreshes every minute. Unavailable or expired data shows `?`, never a made-up percentage.
 
 ## Account connection
 

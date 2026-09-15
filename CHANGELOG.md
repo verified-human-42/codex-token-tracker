@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1
+
+- Plus accounts refresh usage every 20 seconds; Pro accounts continue to refresh every minute.
+- Replaced the README tray screenshot with the supplied image after removing the language indicators.
+
 ## 1.0
 
 Initial release.
