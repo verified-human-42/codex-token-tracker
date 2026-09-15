@@ -35,4 +35,4 @@ Quit the app, then run this in Windows PowerShell:
 .\build.ps1
 ```
 
-Unofficial and unsigned. It uses ChatGPT's internal usage endpoint, so service changes may break it.
+Unofficial and unsigned. It uses ChatGPT's internal usage endpoint, so service changes may break it. I'll fix it if/when it breaks :)
