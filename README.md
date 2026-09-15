@@ -1,54 +1,38 @@
 # Codex Token Tracker
 
-A **portable Windows tray app — no installation required** — that displays your remaining ChatGPT Work / Codex usage as a percentage.
+Your ChatGPT Work / Codex usage, right in the Windows tray. For people who check their limits like it's the stock market.
 
 > [!TIP]
-> **Download version 1.1**
+> **Portable app. No install needed.** Download the EXE and run it.
 >
-> **Portable app:** download the EXE and run it. No installer.
+> **[Download v1.1](https://github.com/verified-human-42/codex-token-tracker/releases/download/v1.1/TokenTracker.exe)** · [Release notes](https://github.com/verified-human-42/codex-token-tracker/releases/tag/v1.1)
 >
-> **[Download TokenTracker.exe](https://github.com/verified-human-42/codex-token-tracker/releases/download/v1.1/TokenTracker.exe)** · [Release notes](https://github.com/verified-human-42/codex-token-tracker/releases/tag/v1.1)
->
-> Requires Windows 10/11, .NET Framework 4.8, internet access, and an existing Codex sign-in with your ChatGPT account. The executable is unsigned.
+> Needs Windows 10/11, .NET Framework 4.8, internet access, and a Codex sign-in with your ChatGPT account.
 
-## Tray icon
+## The tiny numbers
 
-**Pro:** weekly usage remaining.
+**Pro:** weekly percentage left. Updates every minute.
 
-![The Token Tracker icon showing 99 percent left in the Windows taskbar tray](assets/tray-icon.png)
+![Pro tray icon showing 99 percent left](assets/tray-icon.png)
 
-**Plus:** 10% five-hour usage remaining (red, top) and 25% weekly usage remaining (yellow, bottom).
+**Plus:** five-hour percentage on top, weekly below. Updates every 20 seconds.
 
-![Plus account preview showing 10 percent five-hour usage remaining in red and 25 percent weekly usage remaining in yellow](assets/tray-icon-plus.png)
+![Plus tray icon showing 10 percent above 25 percent](assets/tray-icon-plus.png)
 
-## Use
+## Quick tips
 
-Run **TokenTracker.exe**. No installation or app window. Right-click the tray icon for usage, reset times, refresh, and Quit. Windows may initially place it under the tray's hidden-icons arrow; drag it into the visible tray.
+- Right-click for reset times, refresh, or Quit.
+- Can't see it? Windows probably hid it under the tray arrow. Drag it out.
+- Seeing `?`? Check your connection or sign in to Codex again. A browser sign-in alone won't work.
 
-- Plus: five-hour percentage above weekly percentage.
-- Pro (including Pro Lite): weekly percentage fills the icon.
-- Red: 0–10% left. Yellow: 11–25%. Black: above 25%.
-- Plain Segoe UI digits on a transparent background, drawn at the tray's pixel size.
-- Numbers represent percentages; the percent sign is omitted in the tiny icon for legibility.
-- Plus refreshes every 20 seconds; Pro refreshes every minute. Unavailable or expired data shows `?`, never a made-up percentage.
+It uses your existing Codex sign-in on each PC. No analytics or paid model requests. Checking the meter doesn't run the meter.
 
-## Account connection
+## Build it yourself
 
-Uses the current Windows user's existing Codex ChatGPT sign-in (`%USERPROFILE%\.codex\auth.json`, or `%CODEX_HOME%\auth.json`). ChatGPT Work and Codex share usage. No credentials are bundled, copied, or logged. The app reads the sign-in afresh on each refresh. If it expires, open Codex and sign in again. ChatGPT browser sign-in alone is insufficient.
-
-This uses ChatGPT's internal usage endpoint, which is not a stable public API and can change. No paid model requests are made. Requires internet access and Windows with .NET Framework 4.8 (standard on current Windows 10/11). The EXE is portable; moving it to another PC requires that PC's own Codex sign-in. No automatic startup or registry settings are installed.
-
-## Build
-
-Run `build.ps1` using Windows PowerShell. Source is in `TokenTracker.cs`. `TokenTracker.exe --test` runs parser/color/rendering checks and a live read, writing results under `checks` in the working directory.
+Quit the app, then run this in Windows PowerShell:
 
 ```powershell
 .\build.ps1
-.\TokenTracker.exe
 ```
 
-Quit the running tracker before rebuilding. The build uses the Windows .NET Framework compiler; no NuGet packages are needed.
-
-## Privacy and limitations
-
-Authentication is sent only to ChatGPT's usage endpoint over HTTPS. No analytics or account information are included in the release. This is an unofficial utility and is not affiliated with OpenAI. See [OpenAI's usage documentation](https://learn.chatgpt.com/docs/pricing) for how ChatGPT Work and Codex share usage.
+Unofficial and unsigned. It uses ChatGPT's internal usage endpoint, so service changes may break it.
