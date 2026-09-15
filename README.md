@@ -1,9 +1,11 @@
 # Codex Token Tracker
 
-A small, portable Windows tray app that displays your remaining ChatGPT Work / Codex usage as a percentage.
+A **portable Windows tray app — no installation required** — that displays your remaining ChatGPT Work / Codex usage as a percentage.
 
 > [!TIP]
 > **Download version 1.1**
+>
+> **Portable app:** download the EXE and run it. No installer.
 >
 > **[Download TokenTracker.exe](https://github.com/verified-human-42/codex-token-tracker/releases/download/v1.1/TokenTracker.exe)** · [Release notes](https://github.com/verified-human-42/codex-token-tracker/releases/tag/v1.1)
 >
@@ -15,9 +17,9 @@ A small, portable Windows tray app that displays your remaining ChatGPT Work / C
 
 ![The Token Tracker icon showing 99 percent left in the Windows taskbar tray](assets/tray-icon.png)
 
-**Plus — simulated:** 10% five-hour usage remaining (red, top) and 25% weekly usage remaining (yellow, bottom).
+**Plus:** 10% five-hour usage remaining (![Red](assets/label-red.svg), top) and 25% weekly usage remaining (![Yellow](assets/label-yellow.svg), bottom).
 
-![Simulated Plus account showing 10 percent five-hour usage remaining in red and 25 percent weekly usage remaining in yellow](assets/tray-icon-plus.png)
+![Plus account preview showing 10 percent five-hour usage remaining in red and 25 percent weekly usage remaining in yellow](assets/tray-icon-plus.png)
 
 ## Use
 
@@ -25,7 +27,7 @@ Run **TokenTracker.exe**. No installation or app window. Right-click the tray ic
 
 - Plus: five-hour percentage above weekly percentage.
 - Pro (including Pro Lite): weekly percentage fills the icon.
-- Red: 0–10% left. Yellow: 11–25%. Black: above 25%.
+- ![Red](assets/label-red.svg): 0–10% left. ![Yellow](assets/label-yellow.svg): 11–25%. ![Black](assets/label-black.svg): above 25%.
 - Plain Segoe UI digits on a transparent background, drawn at the tray's pixel size.
 - Numbers represent percentages; the percent sign is omitted in the tiny icon for legibility.
 - Plus refreshes every 20 seconds; Pro refreshes every minute. Unavailable or expired data shows `?`, never a made-up percentage.
