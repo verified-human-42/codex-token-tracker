@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2
+
+- Healthy usage text now appears white when Windows is using dark mode, so the tray icon remains readable.
+- Added dark-mode and light-mode color coverage to the icon checks.
+
 ## 1.1
 
 - Redesigned the tray icon with plain Segoe UI digits on a transparent background, without a badge or outline.
@@ -14,7 +19,7 @@ Initial release.
 - Portable Windows executable with a tray-only interface.
 - Plus accounts show five-hour and weekly usage remaining in two rows.
 - Pro accounts show weekly usage remaining in one large number.
-- Red at 10% or below, yellow at 25% or below, and black otherwise.
+- Red at 10% or below, yellow at 25% or below, and black otherwise in light mode or white in dark mode.
 - Right-click menu with remaining percentages, reset times, refresh, and Quit.
 - Automatic refresh every minute using the existing Codex sign-in.
 - Unknown or unavailable usage displays a question mark.

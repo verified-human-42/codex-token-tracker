@@ -5,7 +5,7 @@ Your ChatGPT Work / Codex usage, right in the Windows tray. For people who check
 > [!TIP]
 > **Portable app. No install needed.** Download the EXE and run it.
 >
-> **[Download v1.1](https://github.com/verified-human-42/codex-token-tracker/releases/download/v1.1/TokenTracker.exe)** · [Release notes](https://github.com/verified-human-42/codex-token-tracker/releases/tag/v1.1)
+> **[Download v1.2](https://github.com/verified-human-42/codex-token-tracker/releases/download/v1.2/TokenTracker.exe)** · [Release notes](https://github.com/verified-human-42/codex-token-tracker/releases/tag/v1.2)
 >
 > Needs Windows 10/11, .NET Framework 4.8, internet access, and a Codex sign-in with your ChatGPT account.
 

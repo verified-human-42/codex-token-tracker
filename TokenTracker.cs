@@ -10,12 +10,13 @@ using System.Web.Script.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 [assembly: System.Reflection.AssemblyTitle("Codex Token Tracker")]
 [assembly: System.Reflection.AssemblyDescription("ChatGPT Work usage remaining in the Windows system tray")]
-[assembly: System.Reflection.AssemblyVersion("1.1.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.1.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("1.1")]
+[assembly: System.Reflection.AssemblyVersion("1.2.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("1.2.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.2")]
 
 static class Program {
     [DllImport("user32.dll")] static extern bool SetProcessDPIAware();
@@ -82,7 +83,14 @@ class Usage {
 }
 static class Artwork {
     [DllImport("user32.dll")] static extern bool DestroyIcon(IntPtr icon);
-    public static Color Ink(int n) { return n <= 10 ? Color.FromArgb(218,35,45) : n <= 25 ? Color.FromArgb(221,166,0) : Color.Black; }
+    public static Color Ink(int n, bool darkMode) { return n <= 10 ? Color.FromArgb(218,35,45) : n <= 25 ? Color.FromArgb(221,166,0) : darkMode ? Color.White : Color.Black; }
+    public static bool IsDarkMode() {
+        using (var key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")) {
+            object value = key == null ? null : key.GetValue("SystemUsesLightTheme");
+            if (value == null) value = key == null ? null : key.GetValue("AppsUseLightTheme");
+            return value is int && (int)value == 0;
+        }
+    }
     public static Bitmap Draw(int size, int? top, int? bottom, bool two) {
         var bitmap = new Bitmap(size, size);
         Paint(bitmap, new Rectangle(0,0,size,two ? size/2 : size), top);
@@ -93,7 +101,8 @@ static class Artwork {
     // grayscale coverage into alpha; GDI text does not preserve bitmap alpha.
     static void Paint(Bitmap target, Rectangle box, int? number) {
         string text = number.HasValue ? number.Value.ToString() : "?";
-        Color ink = number.HasValue ? Ink(number.Value) : Color.Gray;
+        bool darkMode = IsDarkMode();
+        Color ink = number.HasValue ? Ink(number.Value, darkMode) : darkMode ? Color.White : Color.Gray;
         var flags = TextFormatFlags.NoPadding | TextFormatFlags.NoClipping | TextFormatFlags.SingleLine;
         using (var mask = new Bitmap(128,128)) {
             for (float pixels = box.Height*1.5f; pixels >= 4f; pixels -= .5f) {
@@ -199,7 +208,7 @@ static class Tests {
         Check(pro.WeeklyOnly && pro.Week.Left == 75 && pro.Five == null && pro.RefreshMilliseconds == 60000);
         var plus = Usage.Parse("{\"plan_type\":\"plus\",\"rate_limit\":{\"primary_window\":"+w+",\"secondary_window\":"+f+"}}");
         Check(!plus.WeeklyOnly && plus.Five.Left == 5 && plus.Week.Left == 75 && plus.RefreshMilliseconds == 20000);
-        Check(Artwork.Ink(10) != Artwork.Ink(11) && Artwork.Ink(25) != Artwork.Ink(26) && Artwork.Ink(100) == Color.Black);
+        Check(Artwork.Ink(10, false) != Artwork.Ink(11, false) && Artwork.Ink(25, false) != Artwork.Ink(26, false) && Artwork.Ink(100, false) == Color.Black && Artwork.Ink(100, true) == Color.White);
         Directory.CreateDirectory("checks");
         foreach (int size in new[] {16,20,24,32,48}) {
             using (var b = Artwork.Draw(size,100,null,false)) b.Save("checks/pro-"+size+".png");
